@@ -214,7 +214,7 @@ La información del paciente es sensible. El análisis debe centrarse en los dat
 st.set_page_config(page_title="CRM SUGOS MRs v0.0.1", layout="wide")
 st.title("CRM SUGOS MRs v0.0.1")
 st.markdown("""
-**Seleccione Entorno/Cliente**, ingrese **credenciales API** y el **Country ID**.
+**Seleccione Entorno/Cliente**, ingrese **credenciales API** y el **Cédula**.
 - El sistema consultará todas las historias médicas (HMs).
 - Luego, podrá generar un **Análisis Clínico Estructurado** utilizando IA Generativa.
 """)
