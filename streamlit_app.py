@@ -267,8 +267,8 @@ except Exception as e:
     st.stop()
 
 # --- Verificación de API Key de Gemini ---
-st.sidebar.divider()
-st.sidebar.subheader("Configuración IA Generativa")
+# st.sidebar.divider()
+# st.sidebar.subheader("Configuración IA Generativa")
 google_api_key = st.secrets.get("GOOGLE_API_KEY")
 if google_api_key:
     # st.sidebar.success("✅ API Key de Google Gemini encontrada.")
