@@ -211,11 +211,11 @@ La información del paciente es sensible. El análisis debe centrarse en los dat
 
 # --- Interfaz de Streamlit ---
 
-st.set_page_config(page_title="CRM SUGOS MRs v0.0.1", layout="wide")
-st.title("CRM SUGOS MRs v0.0.1")
+st.set_page_config(page_title="CRM SUGOS HMs v0.0.1", layout="wide")
+st.title("CRM SUGOS HMs v0.0.1")
 st.markdown("""
 **Seleccione Entorno/Cliente**, ingrese **credenciales API** y el **Cédula**.
-- El sistema consultará todas las historias médicas (HMs).
+- El sistema consultará todas las **Historias Médicas (HMs)**.
 - Luego, podrá generar un **Análisis Clínico Estructurado** utilizando IA Generativa.
 """)
 
@@ -410,7 +410,7 @@ if st.session_state.kpi_data:
             kpis_data_for_llm = st.session_state.kpi_data.get("data", {}).get("kpis", None)
 
             if not kpis_data_for_llm:
-                st.error("Error: La estructura del JSON de MRs no contiene 'data.kpis' como se esperaba. No se puede generar el análisis.")
+                st.error("Error: La estructura del JSON de HMs no contiene 'data.kpis' como se esperaba. No se puede generar el análisis.")
                 st.json(st.session_state.kpi_data) # Mostrar el JSON problemático
             else:
                 with st.spinner(f"Generando análisis clínico con {st.session_state.llm_model_select}... Esto puede tardar unos minutos."):
@@ -435,4 +435,4 @@ if st.session_state.clinical_analysis_text:
 
 # --- Pie de página ---
 st.markdown("---")
-st.caption(f"CRM SUGOS MRs v0.0.1")
+st.caption(f"CRM SUGOS HMs v0.0.1")
