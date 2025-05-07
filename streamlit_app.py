@@ -309,7 +309,7 @@ with col1_params:
     st.subheader("Parámetros de Consulta de Historias Médicas")
     input_country_id_str = st.text_input(
         "Cédula:",
-        placeholder="Ej: V7943643 o 7943643",
+        placeholder="Número de Cédula 12345678",
         key="kpi_country_id_input"
     )
 
