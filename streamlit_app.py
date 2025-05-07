@@ -215,8 +215,8 @@ st.set_page_config(page_title="CRM SUGOS MRs v0.0.1", layout="wide")
 st.title("CRM SUGOS MRs v0.0.1")
 st.markdown("""
 **Seleccione Entorno/Cliente**, ingrese **credenciales API** y el **Country ID**.
-- El sistema consultará los registros médicos (KPIs).
-- Luego, podrá generar un **Análisis Clínico Estructurado** utilizando IA Generativa (Google Gemini).
+- El sistema consultará todas las historias médicas (HMs).
+- Luego, podrá generar un **Análisis Clínico Estructurado** utilizando IA Generativa.
 """)
 
 # --- Inicializar Flags y Estado ---
@@ -306,7 +306,7 @@ st.sidebar.caption("Credenciales para el entorno CRM seleccionado.")
 # --- Parámetros de Consulta ---
 col1_params, col2_params = st.columns(2)
 with col1_params:
-    st.subheader("Parámetros de Consulta de Historias Médicas")
+    st.subheader("Consulta de Historias Médicas")
     input_country_id_str = st.text_input(
         "Cédula:",
         placeholder="Número de Cédula 12345678",
