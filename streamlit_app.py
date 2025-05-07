@@ -122,7 +122,7 @@ def generate_clinical_analysis_with_llm(kpi_json_data_for_llm, model_name, promp
         generation_config = genai.GenerationConfig(
             temperature=0.2, # Más determinista para seguir instrucciones
             # top_p=0.9,
-            max_output_tokens=8192 # Asegurar que la respuesta no se corte
+            max_output_tokens=65536 # Asegurar que la respuesta no se corte
         )
 
         response = model.generate_content(
