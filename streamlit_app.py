@@ -332,10 +332,13 @@ ULTRASONIDO PARTES BLANDAS
   - Hallazgos Principales: Exploración región base del pene. Visualización de capas en piel, musculares y tejido adiposo sin alteraciones. Se evidencia L.O.E., redondeada, mixta, a predominio líquido, con grumos, de 4 x 6 mm, en plano superficial. No se observa neoformación vascular. Conclusión: Signos ecográficos sugerentes de absceso en recidiva.
 
 Ejemplo de cómo debería verse esta sección E: para el caso de Laboratorio
-  - Fecha del Examen: 19/01/2024
-  - ID del Examen: 6681
-  - UROANALISIS -> EX. ORINA COMPLETA -> EX. MACROSCOPICO [COLOR] : Amarillo (Unidad si se tiene)
-  - UROANALISIS -> EX. ORINA COMPLETA -> EX. MACROSCOPICO [CANTIDAD] : Escasas (Unidad si se tiene)
+  - Fecha del Examen: 19/01/2025
+  - ID del Laboratorio: 6681
+  - UROANALISIS 
+        . EX. ORINA COMPLETA 
+            -> EX. MACROSCOPICO 
+                    [COLOR] : Amarillo (Unidad si se tiene)
+                    [CANTIDAD] : Escasas (Unidad si se tiene)
 
 Formato de Salida:
 El resultado debe ser un texto bien estructurado, claro y profesional, emulando la formalidad y detalle de un resumen clínico. No incluyas esta sección de "Instrucciones" en la salida final, solo el análisis clínico.
@@ -350,7 +353,7 @@ st.set_page_config(page_title="CRM SUGOS HM & Exámenes & Laboratorios v0.0.3", 
 st.title("CRM SUGOS HM & Exámenes & Laboratorios v0.0.3")
 st.markdown("""
 **Seleccione Entorno/Cliente**, ingrese **credenciales API** y la **Cédula**.
-- El sistema consultará **Historias Médicas (HMs)** - **Resultados de Exámenes** y **Resultados de Laboratorios**.
+- El sistema consultará **Historias Médicas (HMs)** - **Resultados de Exámenes** y **Laboratorios**.
 - Luego, podrá generar un **Análisis Clínico Estructurado** utilizando IA Generativa.
 """)
 
