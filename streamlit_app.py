@@ -143,6 +143,53 @@ def get_exam_data(token, country_id, config):
         st.error(f"Error inesperado al obtener datos de Exámenes: {e}")
         return None
 
+def get_lab_data(token, country_id, config):
+    """Obtiene datos del endpoint de KPI para resultados de exámenes."""
+    api_base_url = config.get('api_base_url')
+    if not api_base_url:
+        st.error("Error: 'api_base_url' no definida en la configuración del entorno.")
+        return None
+
+    kpi_action_params = {"afn": "admin", "cfn": "kpis"}
+    kpi_endpoint_path = "custom/apps/api.php"
+    kpi_url = f"{urljoin(api_base_url, kpi_endpoint_path)}?{urlencode(kpi_action_params)}"
+
+    payload = {
+        "page-id": "kpis",
+        "section-id": "kpis",
+        "kpi-name": "labresults", # Modificado para exámenes
+        "country-ids": country_id
+    }
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.get(kpi_url, headers=headers, json=payload, timeout=60) # GET con payload en JSON
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except requests.exceptions.HTTPError as e:
+        st.error(f"Error HTTP {e.response.status_code} al obtener datos de Exámenes desde {kpi_url}.")
+        try:
+            st.error(f"Respuesta del servidor (Exámenes): {e.response.text}")
+        except Exception:
+            st.error("No se pudo obtener el detalle de la respuesta del servidor (Exámenes).")
+        return None
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error de conexión al obtener datos de Exámenes desde {kpi_url}: {e}")
+        return None
+    except json.JSONDecodeError:
+        st.error(f"Error decodificando JSON de la respuesta de Exámenes ({kpi_url}). Respuesta recibida:")
+        st.code(response.text, language='text')
+        return None
+    except Exception as e:
+        st.error(f"Error inesperado al obtener datos de Exámenes: {e}")
+        return None
+
+
+
 # --- FUNCIÓN PARA GEMINI ---
 def generate_clinical_analysis_with_llm(combined_json_data_for_llm, model_name, prompt_instructions_template, gemini_api_key):
     """Genera análisis clínico usando Gemini."""
@@ -204,6 +251,7 @@ Aquí está el JSON con los datos del paciente:
 Este JSON contiene dos claves principales: "medical_history" y "exam_results".
 - Para "medical_history": Analiza el JSON para extraer todos los registros médicos del paciente de `medical_history.Records`. Procesa todos los objetos dentro de ese array.
 - Para "exam_results": Analiza el JSON para extraer los resultados de los exámenes del paciente de `exam_results.Records`.
+- Para "lab_results": Analiza el JSON para extraer los resultados de los laboratorios del paciente de `lab_results.Records`.
 
 Analiza el JSON proporcionado para extraer toda la información relevante.
 Consolidación del Historial Médico y Exámenes:
@@ -260,6 +308,7 @@ Alertas y Recomendaciones (basadas en el análisis de `medical_history`): (Concl
 
 E. RESULTADOS DE EXÁMENES COMPLEMENTARIOS (Estudios y Laboratorios)
 (Basado en `exam_results.Records`. Si `exam_results` o `exam_results.Records` es nulo o vacío, indicar "No hay resultados de exámenes disponibles".)
+(Basado en `lab_results.Records`. Si `lab_results` o `lab_results.Records` es nulo o vacío, indicar "No hay resultados de laboratorios disponibles".)
 
 Para cada tipo de examen (agrupado por `ExamType.Type`) presente en `exam_results.Records`:
 Presenta la información agrupada por el `ExamType.Type`. Para cada examen dentro de ese tipo:
@@ -271,7 +320,7 @@ Presenta la información agrupada por el `ExamType.Type`. Para cada examen dentr
   - Unidad (referencial): (Extraer de `ExamType.Unit`)
   - Hallazgos Principales: (Analizar el contenido de `ExamResults`. Este campo contiene HTML. Extrae el texto significativo, elimina las etiquetas HTML y resume los hallazgos clave y la conclusión si está presente. Si el contenido es muy extenso, enfócate en la sección de conclusión o hallazgos principales. Sé conciso y claro.)
 
-Ejemplo de cómo debería verse esta sección E:
+Ejemplo de cómo debería verse esta sección E: para el caso de Examenes
 
 E. RESULTADOS DE EXÁMENES COMPLEMENTARIOS (Estudios y Laboratorios)
 
@@ -282,12 +331,11 @@ ULTRASONIDO PARTES BLANDAS
   - Unidad: Ultrasonido
   - Hallazgos Principales: Exploración región base del pene. Visualización de capas en piel, musculares y tejido adiposo sin alteraciones. Se evidencia L.O.E., redondeada, mixta, a predominio líquido, con grumos, de 4 x 6 mm, en plano superficial. No se observa neoformación vascular. Conclusión: Signos ecográficos sugerentes de absceso en recidiva.
 
-ULTRASONIDO ABDOMINAL
-  - Fecha del Examen: 08/05/2024
-  - ID del Examen: 7016
-  - Código del Examen: ULT0482AG
-  - Unidad: Ultrasonido
-  - Hallazgos Principales: Hígado de tamaño normal, ecogenicidad heterogénea por infiltración grasa (Esteatosis hepática grado I). Vesícula biliar sin litiasis. Bazo y páncreas normales. Riñón derecho normal. Riñón izquierdo con quiste simple de 21.8 mm x 20.7 mm. Vejiga urinaria normal. Conclusión: Quiste simple en riñón izquierdo. Esteatosis hepática grado I. Resto del estudio dentro de parámetros normales.
+Ejemplo de cómo debería verse esta sección E: para el caso de Laboratorio
+  - Fecha del Examen: 19/01/2024
+  - ID del Examen: 6681
+  - UROANALISIS -> EX. ORINA COMPLETA -> EX. MACROSCOPICO [COLOR] : Amarillo (Unidad si se tiene)
+  - UROANALISIS -> EX. ORINA COMPLETA -> EX. MACROSCOPICO [CANTIDAD] : Escasas (Unidad si se tiene)
 
 Formato de Salida:
 El resultado debe ser un texto bien estructurado, claro y profesional, emulando la formalidad y detalle de un resumen clínico. No incluyas esta sección de "Instrucciones" en la salida final, solo el análisis clínico.
@@ -298,11 +346,11 @@ La información del paciente es sensible. El análisis debe centrarse en los dat
 
 # --- Interfaz de Streamlit ---
 
-st.set_page_config(page_title="CRM SUGOS HM & Exámenes v0.0.2", layout="wide")
-st.title("CRM SUGOS HM & Exámenes v0.0.2")
+st.set_page_config(page_title="CRM SUGOS HM & Exámenes & Laboratorios v0.0.3", layout="wide")
+st.title("CRM SUGOS HM & Exámenes & Laboratorios v0.0.3")
 st.markdown("""
 **Seleccione Entorno/Cliente**, ingrese **credenciales API** y la **Cédula**.
-- El sistema consultará **Historias Médicas (HMs)** y **Resultados de Exámenes**.
+- El sistema consultará **Historias Médicas (HMs)** - **Resultados de Exámenes** y **Resultados de Laboratorios**.
 - Luego, podrá generar un **Análisis Clínico Estructurado** utilizando IA Generativa.
 """)
 
@@ -315,6 +363,8 @@ if 'kpi_data' not in st.session_state: # Para almacenar los datos de Historias M
     st.session_state.kpi_data = None
 if 'exam_data' not in st.session_state: # Para almacenar los datos de Exámenes
     st.session_state.exam_data = None
+if 'lab_data' not in st.session_state: # Para almacenar los datos de Laboratorios
+    st.session_state.lab_data = None
 if 'clinical_analysis_text' not in st.session_state: # Para almacenar el análisis del LLM
     st.session_state.clinical_analysis_text = None
 if 'gemini_api_key_verified' not in st.session_state:
@@ -499,21 +549,40 @@ if process_data_button_pressed:
             st.warning("No se pudieron obtener los Resultados de Exámenes o la respuesta estaba vacía.")
             st.session_state.exam_data = None # Asegurar que es None
 
-        if st.session_state.kpi_data is None and st.session_state.exam_data is None:
-            st.error("No se pudo obtener información de Historias Médicas ni de Exámenes.")
+        # Obtener Resultados de Laboratorios
+        with st.spinner(f"Obteniendo Resultados de Exámenes para Cédula: {current_country_id}..."):
+            raw_lab_data = get_lab_data(token, current_country_id, selected_config)
+
+        if raw_lab_data is not None:
+            st.session_state.lab_data = raw_lab_data
+            st.success("Resultados de Laboratorio obtenidos exitosamente.")
+            st.subheader("Respuesta JSON de Laboratorio (Datos Crudos):")
+            try:
+                pretty_json_lab = json.dumps(raw_lab_data, indent=2, ensure_ascii=False)
+                with st.expander("Ver/Ocultar JSON de Laboratorio", expanded=False):
+                    st.code(pretty_json_lab, language='json')
+            except Exception as e:
+                st.error(f"No se pudo formatear el JSON de Laboratorio para mostrar: {e}")
+                st.text(raw_exam_data)
+        else:
+            st.warning("No se pudieron obtener los Resultados de Laboratorio o la respuesta estaba vacía.")
+            st.session_state.exam_data = None # Asegurar que es None
+
+        if st.session_state.kpi_data is None and st.session_state.exam_data is None and st.session_state.lab_data is None:
+            st.error("No se pudo obtener información de Historias Médicas ni de Exámenes ni de Laboratorios.")
             st.session_state.kpi_run_processed = False
         else:
             st.session_state.kpi_run_processed = True
-
     else:
         st.error("Fallo en la autenticación API del Entorno. No se puede continuar.")
         st.session_state.kpi_run_processed = False
         st.session_state.kpi_data = None
         st.session_state.exam_data = None
+        st.session_state.lab_data = None
 
 
 # --- Botón y Lógica para Generar Análisis Clínico con LLM ---
-if st.session_state.kpi_data or st.session_state.exam_data: # Si tenemos al menos uno de los dos
+if st.session_state.kpi_data or st.session_state.exam_data or st.session_state.lab_data: # Si tenemos al menos uno de los dos
     st.divider()
     st.subheader("Análisis Clínico con IA Generativa")
 
@@ -537,13 +606,21 @@ if st.session_state.kpi_data or st.session_state.exam_data: # Si tenemos al meno
                     st.warning("La estructura del JSON de Exámenes no contiene 'data.kpis'. Los exámenes no se incluirán en el análisis si la estructura es incorrecta.")
                     # st.json(st.session_state.exam_data) # Mostrar JSON problemático
 
-            if not medical_history_kpis and not exam_results_kpis:
+            lab_results_kpis = None
+            if st.session_state.lab_data:
+                lab_results_kpis = st.session_state.lab_data.get("data", {}).get("kpis", None)
+                if not lab_results_kpis:
+                    st.warning("La estructura del JSON de Laboratorios no contiene 'data.kpis'. Los Laboratorios no se incluirán en el análisis si la estructura es incorrecta.")
+                    # st.json(st.session_state.lab_data) # Mostrar JSON problemático
+
+            if not medical_history_kpis and not exam_results_kpis and not lab_results_kpis:
                 st.error("No hay datos válidos de Historias Médicas ni de Exámenes para enviar al LLM.")
             else:
                 # Crear el JSON combinado para el LLM
                 combined_data_for_llm = {
                     "medical_history": medical_history_kpis, # Puede ser None
-                    "exam_results": exam_results_kpis      # Puede ser None
+                    "exam_results": exam_results_kpis,      # Puede ser None
+                    "lab_results": lab_results_kpis      # Puede ser None
                 }
 
                 with st.spinner(f"Generando análisis clínico con {st.session_state.llm_model_select}... Esto puede tardar unos minutos."):
@@ -568,4 +645,4 @@ if st.session_state.clinical_analysis_text:
 
 # --- Pie de página ---
 st.markdown("---")
-st.caption(f"CRM SUGOS HM & Exámenes v0.0.2")
+st.caption(f"CRM SUGOS HM & Exámenes & Laboratorios v0.0.3")
