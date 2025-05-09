@@ -281,6 +281,8 @@ C. ORGANIZACIÓN CRONOLÓGICA DE DATOS POR EVENTO DE ATENCIÓN (CONSULTA MÉDICA
 (Para cada registro en `medical_history.Records` dentro del JSON proporcionado):
 
 Consulta [ID del Registro] (Usar el `ID` principal del registro, ej. "Consulta 2750")
+Doctor: (Usar Doctor.Name)
+Especialidad: (Usar Doctor.Specialty)
 Fecha de consulta: (Usar `Date`)
 Motivo de Consulta: (Usar `Reason`)
 Enfermedad Actual / Padecimiento: (Usar `Sickness`. Describir la condición que llevó a la consulta).
