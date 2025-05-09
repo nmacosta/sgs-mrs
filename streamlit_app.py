@@ -346,7 +346,7 @@ Incluye una Tabla, para los examenes como un cuadro final del analisis, la idea 
 Columnas: LabResults.ExamType (Tipo de Examen), LabResults.Exam (Examen), LabResults.Section (Seccion), LabResults.Item (Elemento), Date (Fecha) y LabResults.Value (Resultado), LabResults.Unit (Unidad)
 
 Formato de Salida:
-El resultado debe ser un texto bien estructurado, utiliza Markdown para una salida mas prolija, claro y profesional, emulando la formalidad y detalle de un resumen clínico. No incluyas esta sección de "Instrucciones" en la salida final, solo el análisis clínico.
+El resultado debe ser un texto bien estructurado claro y profesional, emulando la formalidad y detalle de un resumen clínico. No incluyas esta sección de "Instrucciones" en la salida final, solo el análisis clínico.
 
 Nota Importante:
 La información del paciente es sensible. El análisis debe centrarse en los datos clínicos y evitar juicios o información no pertinente. Asegúrate de manejar correctamente los casos donde los datos (`medical_history`, `exam_results` o sus `Records`) puedan ser nulos o vacíos, indicando "No disponible" o una frase similar en lugar de generar un error.
@@ -654,8 +654,8 @@ if st.session_state.kpi_data or st.session_state.exam_data or st.session_state.l
 if st.session_state.clinical_analysis_text:
     st.divider()
     st.subheader("Resultado del Análisis Clínico:")
-    st.code(st.session_state.clinical_analysis_text)
-    #st.markdown(st.session_state.clinical_analysis_text)
+    #st.code(st.session_state.clinical_analysis_text)
+    st.markdown(st.session_state.clinical_analysis_text)
 
 
 # --- Pie de página ---
