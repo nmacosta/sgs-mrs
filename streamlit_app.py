@@ -654,7 +654,8 @@ if st.session_state.kpi_data or st.session_state.exam_data or st.session_state.l
 if st.session_state.clinical_analysis_text:
     st.divider()
     st.subheader("Resultado del Análisis Clínico:")
-    st.markdown(st.session_state.clinical_analysis_text)
+    st.code(st.session_state.clinical_analysis_text)
+    #st.markdown(st.session_state.clinical_analysis_text)
 
 
 # --- Pie de página ---
