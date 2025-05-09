@@ -628,7 +628,7 @@ if st.session_state.kpi_data or st.session_state.exam_data or st.session_state.l
                     "lab_results": lab_results_kpis      # Puede ser None
                 }
 
-                with st.spinner(f"Generando análisis clínico con {st.session_state.llm_model_select}... Esto puede tardar unos minutos."):
+                with st.spinner(f"Generando análisis clínico con {st.session_state.llm_model_select}.. ",show_time=True):
                     analysis_result = generate_clinical_analysis_with_llm(
                         combined_data_for_llm,
                         st.session_state.llm_model_select,
