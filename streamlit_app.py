@@ -342,6 +342,9 @@ Ejemplo de cómo debería verse esta sección E: para el caso de Laboratorio
                     [COLOR] : Amarillo (Unidad si se tiene)
                     [CANTIDAD] : Escasas (Unidad si se tiene)
 
+Incluye una Tabla Markdown, para los examenes como un cuadro final del analisis, la idea es agrupar en una tabla los examenes con los diferentes valores obtenidos a través del tiempo
+Columnas: LabResults.ExamType (Tipo de Examen), LabResults.Exam (Examen), LabResults.Section (Seccion), LabResults.Item (Elemento), Date (Fecha) y LabResults.Value (Resultado), LabResults.Unit (Unidad)
+
 Formato de Salida:
 El resultado debe ser un texto bien estructurado, claro y profesional, emulando la formalidad y detalle de un resumen clínico. No incluyas esta sección de "Instrucciones" en la salida final, solo el análisis clínico.
 
