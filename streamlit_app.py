@@ -459,7 +459,7 @@ with col1_params:
 
 with col2_params:
     st.subheader("Modelo IA (para Análisis)")
-    model_options = ['gemini-2.5-pro-preview-05-06','gemini-2.5-flash-lite-preview-06-17']
+    model_options = ['igemini-2.5-pro-exp-03-25','gemini-2.5-flash-lite-preview-06-17']
     selected_model_name = st.selectbox(
         "Modelo Gemini:",
         options=model_options,
